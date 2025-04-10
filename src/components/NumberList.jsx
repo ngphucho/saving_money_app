@@ -3,6 +3,7 @@ import "../styles/NumberList.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import { Modal, Button } from "react-bootstrap";
+import { Row, Col, ProgressBar } from 'react-bootstrap';
 
 const initialNumbersData = Array.from({ length: 370 }, (_, index) => ({
   value: index + 1,
@@ -47,7 +48,7 @@ function NumberList() {
   };
 
   const saveData = async () => {
-    console.log({ numbers });
+    //console.log({ numbers });
     try {
       const response = await fetch(API_ENDPOINT, {
         method: "PUT",
@@ -65,6 +66,17 @@ function NumberList() {
       console.error("Failed to save data:", e);
     }
   };
+
+  function getProgressBarVariant(percentage) {
+    if (percentage >= 0 && percentage <= 30) {
+      return 'danger';
+    } else if (percentage >= 31 && percentage <= 60) {
+      return 'warning';
+    } else if (percentage >= 61 && percentage <= 100) {
+      return 'success';
+    }
+    return 'primary'; // Màu mặc định nếu không nằm trong các khoảng trên (ví dụ: lỗi giá trị)
+  }
 
   useEffect(() => {
     loadData();
@@ -204,61 +216,51 @@ function NumberList() {
 
   return (
     <div className="container">
-      <div className="button-container mb-2 d-flex justify-content-between align-items-center">
-        <button onClick={createRandomTrue} className="btn btn-primary">
-          <span className="d-none d-md-inline-block">TẠO NGẪU NHIÊN</span>
-          <span className="d-inline-block d-md-none" aria-hidden="true">
-            <i className="bi bi-plus-circle"></i>
-          </span>
-        </button>
-        <span>
-          <img
-            src="/android-chrome-512x512.png"
-            alt="Logo M&H"
-            className="img-fluid"
-            style={{
-              marginRight: "5px",
-              verticalAlign: "middle",
-              maxHeight: "70px",
-            }}
-          />
-          <span
-            style={{
-              color: "#333", // Màu xám đậm
-              fontSize: "1.1em",
-              fontWeight: "500",
-              verticalAlign: "middle",
-              marginLeft: "5px",
-            }}
-          >
-            SAVING MONEY
-          </span>
-        </span>
-        <button onClick={handleShowHistoryClick} className="btn btn-info">
-          <span className="d-none d-md-inline-block">Xem Lịch Sử</span>
-          <span className="d-inline-block d-md-none" aria-hidden="true">
-            <i className="bi bi-clock-history"></i>
-          </span>
-        </button>
-      </div>
-      <div
-        className="goal-info mb-3 text-center"
-        style={{
-          display: "flex",
-          justifyContent: "space-around",
-          alignItems: "center",
-        }}
-      >
-        <span style={{ textAlign: "center" }}>
-          {`Goal for ${currentYear}: ${formatCurrency(totalSum)}`}
-        </span>
-        <span style={{ textAlign: "center" }}>
-          {`Current: ${formatCurrency(currentTrueSum)}`}
-        </span>
-        <span style={{ textAlign: "center" }}>
-          {`Progress: (${completionPercentage}%)`}
-        </span>
-      </div>
+      {/* =========== */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '80%', margin: '0 auto' }}>
+  <button onClick={createRandomTrue} className="btn btn-primary">
+    <span className="d-none d-md-inline-block">TẠO NGẪU NHIÊN</span>
+    <span className="d-inline-block d-md-none" aria-hidden="true"><i className="bi bi-plus-circle"></i></span>
+  </button>
+  <div style={{ textAlign: 'center', flexShrink: 0 }}>
+    {/* Logo M&H và SAVING MONEY ở giữa */}
+    <span>
+      <img
+        src="/android-chrome-512x512.png"
+        alt="Logo M&H"
+        className="img-fluid"
+        style={{ maxHeight: '50px', marginRight: '5px', verticalAlign: 'middle' }}
+      />
+      SAVING MONEY
+    </span>
+  </div>
+  <button onClick={handleShowHistoryClick} className="btn btn-info" style={{ width: 'auto', minWidth: '0', backgroundColor: '#007bff', borderColor: '#007bff' }}>
+    <span className="d-none d-md-inline-block">&nbsp;&nbsp;XEM LỊCH SỬ&nbsp;&nbsp;</span>
+    <span className="d-inline-block d-md-none" aria-hidden="true"><i className="bi bi-clock-history"></i></span>
+  </button>
+</div>
+{/* =========== */}
+      
+<Row className="mb-3 align-items-center justify-content-around">
+  <Col xs={12} md="auto" className="mb-2 mb-md-0 text-center text-md-left">
+    <i className="bi bi-flag mr-2" style={{ color: '#777' }}></i>
+    <span>Goal for 2025:</span> <strong className="ml-1">{formatCurrency(totalSum)}</strong>
+  </Col>
+  <Col xs={12} md="auto" className="mb-2 mb-md-0 text-center text-md-left">
+    <i className="bi bi-wallet mr-2" style={{ color: 'green' }}></i>
+    <span>Current:</span> <strong className="ml-1" style={{ color: 'green' }}>{formatCurrency(currentTrueSum)}</strong>
+  </Col>
+  <Col xs={12} md="auto" className="text-center text-md-left d-flex align-items-center">
+  <span className="mr-2">Progress:&nbsp;</span>
+  <ProgressBar
+    animated
+    now={parseFloat(completionPercentage)}
+    label={`${completionPercentage}%`}
+    variant={getProgressBarVariant(parseFloat(completionPercentage))}
+    style={{ width: '100%', minWidth: '150px', marginTop: '0' }}
+  />
+</Col>
+</Row>
 
       {/* Modal lịch sử */}
       {showHistoryModal && (

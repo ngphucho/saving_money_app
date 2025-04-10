@@ -60,4 +60,18 @@
   text-align: center;
 }
 
+.centered-label-progressbar .progress-bar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.centered-label-progressbar .progress-bar > span {
+  position: absolute; /* Để label nằm trên cùng */
+  left: 50%;
+  transform: translateX(-50%); /* Căn giữa theo chiều ngang */
+  color: white; /* Hoặc màu chữ bạn muốn */
+  font-size: 0.8em; /* Điều chỉnh kích thước chữ nếu cần */
+}
+
 /* Các style khác có thể có trong file của bạn */
