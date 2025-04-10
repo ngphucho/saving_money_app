@@ -3,7 +3,7 @@ import "../styles/NumberList.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import { Modal, Button } from "react-bootstrap";
-import { Row, Col, ProgressBar } from 'react-bootstrap';
+import { Row, Col, ProgressBar } from "react-bootstrap";
 
 const initialNumbersData = Array.from({ length: 370 }, (_, index) => ({
   value: index + 1,
@@ -69,13 +69,13 @@ function NumberList() {
 
   function getProgressBarVariant(percentage) {
     if (percentage >= 0 && percentage <= 30) {
-      return 'danger';
+      return "danger";
     } else if (percentage >= 31 && percentage <= 60) {
-      return 'warning';
+      return "warning";
     } else if (percentage >= 61 && percentage <= 100) {
-      return 'success';
+      return "success";
     }
-    return 'primary'; // Màu mặc định nếu không nằm trong các khoảng trên (ví dụ: lỗi giá trị)
+    return "primary"; // Màu mặc định nếu không nằm trong các khoảng trên (ví dụ: lỗi giá trị)
   }
 
   useEffect(() => {
@@ -217,50 +217,91 @@ function NumberList() {
   return (
     <div className="container">
       {/* =========== */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '80%', margin: '0 auto' }}>
-  <button onClick={createRandomTrue} className="btn btn-primary">
-    <span className="d-none d-md-inline-block">TẠO NGẪU NHIÊN</span>
-    <span className="d-inline-block d-md-none" aria-hidden="true"><i className="bi bi-plus-circle"></i></span>
-  </button>
-  <div style={{ textAlign: 'center', flexShrink: 0 }}>
-    {/* Logo M&H và SAVING MONEY ở giữa */}
-    <span>
-      <img
-        src="/android-chrome-512x512.png"
-        alt="Logo M&H"
-        className="img-fluid"
-        style={{ maxHeight: '50px', marginRight: '5px', verticalAlign: 'middle' }}
-      />
-      SAVING MONEY
-    </span>
-  </div>
-  <button onClick={handleShowHistoryClick} className="btn btn-info" style={{ width: 'auto', minWidth: '0', backgroundColor: '#007bff', borderColor: '#007bff' }}>
-    <span className="d-none d-md-inline-block">&nbsp;&nbsp;XEM LỊCH SỬ&nbsp;&nbsp;</span>
-    <span className="d-inline-block d-md-none" aria-hidden="true"><i className="bi bi-clock-history"></i></span>
-  </button>
-</div>
-{/* =========== */}
-      
-<Row className="mb-3 align-items-center justify-content-around">
-  <Col xs={12} md="auto" className="mb-2 mb-md-0 text-center text-md-left">
-    <i className="bi bi-flag mr-2" style={{ color: '#777' }}></i>
-    <span>Goal for 2025:</span> <strong className="ml-1">{formatCurrency(totalSum)}</strong>
-  </Col>
-  <Col xs={12} md="auto" className="mb-2 mb-md-0 text-center text-md-left">
-    <i className="bi bi-wallet mr-2" style={{ color: 'green' }}></i>
-    <span>Current:</span> <strong className="ml-1" style={{ color: 'green' }}>{formatCurrency(currentTrueSum)}</strong>
-  </Col>
-  <Col xs={12} md="auto" className="text-center text-md-left d-flex align-items-center">
-  <span className="mr-2">Progress:&nbsp;</span>
-  <ProgressBar
-    animated
-    now={parseFloat(completionPercentage)}
-    label={`${completionPercentage}%`}
-    variant={getProgressBarVariant(parseFloat(completionPercentage))}
-    style={{ width: '100%', minWidth: '150px', marginTop: '0' }}
-  />
-</Col>
-</Row>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          width: "100%",
+          margin: "0 auto",
+        }}
+      >
+        <button onClick={createRandomTrue} className="btn btn-primary">
+          <span className="d-none d-md-inline-block">TẠO NGẪU NHIÊN</span>
+          <span className="d-inline-block d-md-none" aria-hidden="true">
+            <i className="bi bi-plus-circle"></i>
+          </span>
+        </button>
+        <div style={{ textAlign: "center", flexShrink: 0 }}>
+          {/* Logo M&H và SAVING MONEY ở giữa */}
+          <span>
+            <img
+              src="/android-chrome-512x512.png"
+              alt="Logo M&H"
+              className="img-fluid"
+              style={{
+                maxHeight: "50px",
+                marginRight: "5px",
+                verticalAlign: "middle",
+              }}
+            />
+            SAVING MONEY
+          </span>
+        </div>
+        <button
+          onClick={handleShowHistoryClick}
+          className="btn btn-info"
+          style={{
+            width: "auto",
+            minWidth: "0",
+            backgroundColor: "#007bff",
+            borderColor: "#007bff",
+          }}
+        >
+          <span className="d-none d-md-inline-block">
+            &nbsp;&nbsp;XEM LỊCH SỬ&nbsp;&nbsp;
+          </span>
+          <span className="d-inline-block d-md-none" aria-hidden="true">
+            <i className="bi bi-clock-history"></i>
+          </span>
+        </button>
+      </div>
+      {/* =========== */}
+
+      <Row className="mb-3 align-items-center justify-content-between">
+        <Col
+          xs={12}
+          md="auto"
+          className="mb-2 mb-md-0 text-md-left text-center"
+        >
+          <i className="bi bi-flag mr-2" style={{ color: "#777" }}></i>
+          <span>&nbsp;Goal for 2025:</span>{" "}
+          <strong className="ml-1">{formatCurrency(totalSum)}</strong>
+        </Col>
+        <Col xs={12} md="auto" className="mb-2 mb-md-0 text-center">
+          {" "}
+          {/* Giữ căn giữa cho "Current" */}
+          <i className="bi bi-wallet mr-2" style={{ color: "green" }}></i>
+          <span>&nbsp;Current:</span>{" "}
+          <strong className="ml-1" style={{ color: "green" }}>
+            {formatCurrency(currentTrueSum)}
+          </strong>
+        </Col>
+        <Col
+          xs={12}
+          md="auto"
+          className="text-right d-flex align-items-center justify-content-end"
+        >
+          <span className="mr-2 d-none d-md-inline">Progress:&nbsp;</span>
+          <ProgressBar
+            animated
+            now={parseFloat(completionPercentage)}
+            label={`${completionPercentage}%`}
+            variant={getProgressBarVariant(parseFloat(completionPercentage))}
+            style={{ width: "100%", minWidth: "150px", marginTop: "0" }}
+          />
+        </Col>
+      </Row>
 
       {/* Modal lịch sử */}
       {showHistoryModal && (
