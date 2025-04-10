@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import '../styles/NumberList.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap-icons/font/bootstrap-icons.css';
-import { Modal, Button } from 'react-bootstrap';
+import React, { useState, useEffect } from "react";
+import "../styles/NumberList.css";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap-icons/font/bootstrap-icons.css";
+import { Modal, Button } from "react-bootstrap";
 
 const initialNumbersData = Array.from({ length: 370 }, (_, index) => ({
   value: index + 1,
-  state: 'false',
+  state: "false",
 }));
 
 function NumberList() {
@@ -15,7 +15,7 @@ function NumberList() {
   const [showHistoryModal, setShowHistoryModal] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [numberToToggle, setNumberToToggle] = useState(null);
-  const [nextState, setNextState] = useState('');
+  const [nextState, setNextState] = useState("");
   const [showRandomConfirmModal, setShowRandomConfirmModal] = useState(false);
   const [showRandomSuccessModal, setShowRandomSuccessModal] = useState(false);
   const [lastCreatedRandomNumber, setLastCreatedRandomNumber] = useState(null);
@@ -25,7 +25,7 @@ function NumberList() {
   const [completionPercentage, setCompletionPercentage] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const API_ENDPOINT = 'https://67f1267ac733555e24ac4c9b.mockapi.io/api/data/1';
+  const API_ENDPOINT = "https://67f1267ac733555e24ac4c9b.mockapi.io/api/data/1";
 
   const loadData = async () => {
     setLoading(true);
@@ -47,19 +47,19 @@ function NumberList() {
   };
 
   const saveData = async () => {
-    console.log({numbers});
+    console.log({ numbers });
     try {
       const response = await fetch(API_ENDPOINT, {
-        method: 'PUT',
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ numbers, history }),
       });
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      console.log('Data saved successfully!');
+      console.log("Data saved successfully!");
     } catch (e) {
       setError(e.message);
       console.error("Failed to save data:", e);
@@ -76,7 +76,10 @@ function NumberList() {
   }, [numbers]);
 
   useEffect(() => {
-    const trueSum = numbers.reduce((acc, curr) => acc + (curr.state === 'true' ? curr.value : 0), 0);
+    const trueSum = numbers.reduce(
+      (acc, curr) => acc + (curr.state === "true" ? curr.value : 0),
+      0
+    );
     setCurrentTrueSum(trueSum * 1000);
   }, [numbers]);
 
@@ -93,26 +96,29 @@ function NumberList() {
   }, [numbers, history]);
 
   const formatNumber = (number) => {
-    return number.toString().padStart(3, '0');
+    return number.toString().padStart(3, "0");
   };
 
   const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
+    return new Intl.NumberFormat("vi-VN", {
+      style: "currency",
+      currency: "VND",
+    }).format(amount);
   };
 
   const logHistory = (value, oldState, newState) => {
     const formattedValue = formatNumber(value);
     const timestamp = new Date().toLocaleTimeString();
     const message = `Số ${formattedValue}: ${oldState.toUpperCase()} -> ${newState.toUpperCase()}`;
-    setHistory(prevHistory => [...prevHistory, `${timestamp} - ${message}`]);
+    setHistory((prevHistory) => [...prevHistory, `${timestamp} - ${message}`]);
   };
 
   const toggleState = (value) => {
-    setNumbers(prevNumbers => {
-      return prevNumbers.map(number => {
+    setNumbers((prevNumbers) => {
+      return prevNumbers.map((number) => {
         if (number.value === value) {
           const oldState = number.state;
-          const newState = number.state === 'true' ? 'false' : 'true';
+          const newState = number.state === "true" ? "false" : "true";
           logHistory(value, oldState, newState);
           return { ...number, state: newState };
         }
@@ -126,19 +132,19 @@ function NumberList() {
   };
 
   const handleConfirmRandomTrue = () => {
-    const falseNumbers = numbers.filter(number => number.state === 'false');
+    const falseNumbers = numbers.filter((number) => number.state === "false");
 
     if (falseNumbers.length > 0) {
       const randomIndex = Math.floor(Math.random() * falseNumbers.length);
       const randomNumberToUpdate = falseNumbers[randomIndex].value;
 
-      setNumbers(prevNumbers => {
-        return prevNumbers.map(number => {
+      setNumbers((prevNumbers) => {
+        return prevNumbers.map((number) => {
           if (number.value === randomNumberToUpdate) {
-            logHistory(randomNumberToUpdate, number.state, 'true');
+            logHistory(randomNumberToUpdate, number.state, "true");
             setLastCreatedRandomNumber(formatNumber(randomNumberToUpdate));
             setShowRandomSuccessModal(true);
-            return { ...number, state: 'true' };
+            return { ...number, state: "true" };
           }
           return number;
         });
@@ -157,10 +163,10 @@ function NumberList() {
   };
 
   const confirmToggleState = (value) => {
-    const number = numbers.find(number => number.value === value);
+    const number = numbers.find((number) => number.value === value);
     if (number) {
       setNumberToToggle(number);
-      setNextState(number.state === 'true' ? 'FALSE' : 'TRUE');
+      setNextState(number.state === "true" ? "FALSE" : "TRUE");
       setShowConfirmModal(true);
     }
   };
@@ -191,7 +197,9 @@ function NumberList() {
   }
 
   if (error) {
-    return <div className="text-center text-danger">Lỗi tải dữ liệu: {error}</div>;
+    return (
+      <div className="text-center text-danger">Lỗi tải dữ liệu: {error}</div>
+    );
   }
 
   return (
@@ -199,26 +207,76 @@ function NumberList() {
       <div className="button-container mb-2 d-flex justify-content-between align-items-center">
         <button onClick={createRandomTrue} className="btn btn-primary">
           <span className="d-none d-md-inline-block">TẠO NGẪU NHIÊN</span>
-          <span className="d-inline-block d-md-none" aria-hidden="true"><i className="bi bi-plus-circle"></i></span>
+          <span className="d-inline-block d-md-none" aria-hidden="true">
+            <i className="bi bi-plus-circle"></i>
+          </span>
         </button>
-        <span>SAVING MONEY M&H</span>
+        <span>
+          <img
+            src="/android-chrome-512x512.png"
+            alt="Logo M&H"
+            className="img-fluid"
+            style={{
+              marginRight: "5px",
+              verticalAlign: "middle",
+              maxHeight: "70px",
+            }}
+          />
+          <span
+            style={{
+              color: "#333", // Màu xám đậm
+              fontSize: "1.1em",
+              fontWeight: "500",
+              verticalAlign: "middle",
+              marginLeft: "5px",
+            }}
+          >
+            SAVING MONEY
+          </span>
+        </span>
         <button onClick={handleShowHistoryClick} className="btn btn-info">
           <span className="d-none d-md-inline-block">Xem Lịch Sử</span>
-          <span className="d-inline-block d-md-none" aria-hidden="true"><i className="bi bi-clock-history"></i></span>
+          <span className="d-inline-block d-md-none" aria-hidden="true">
+            <i className="bi bi-clock-history"></i>
+          </span>
         </button>
       </div>
-      <div className="goal-info mb-3 text-center">
-        {`Goal for ${currentYear}: ${formatCurrency(totalSum)} - Current: ${formatCurrency(currentTrueSum)} (${completionPercentage}%)`}
+      <div
+        className="goal-info mb-3 text-center"
+        style={{
+          display: "flex",
+          justifyContent: "space-around",
+          alignItems: "center",
+        }}
+      >
+        <span style={{ textAlign: "center" }}>
+          {`Goal for ${currentYear}: ${formatCurrency(totalSum)}`}
+        </span>
+        <span style={{ textAlign: "center" }}>
+          {`Current: ${formatCurrency(currentTrueSum)}`}
+        </span>
+        <span style={{ textAlign: "center" }}>
+          {`Progress: (${completionPercentage}%)`}
+        </span>
       </div>
 
       {/* Modal lịch sử */}
       {showHistoryModal && (
-        <div className="modal fade show" style={{ display: 'block' }} tabIndex="-1">
+        <div
+          className="modal fade show"
+          style={{ display: "block" }}
+          tabIndex="-1"
+        >
           <div className="modal-dialog modal-dialog-scrollable">
             <div className="modal-content">
               <div className="modal-header">
                 <h5 className="modal-title">Lịch Sử Thay Đổi Trạng Thái</h5>
-                <button type="button" className="btn-close" aria-label="Close" onClick={handleCloseHistoryClick}></button>
+                <button
+                  type="button"
+                  className="btn-close"
+                  aria-label="Close"
+                  onClick={handleCloseHistoryClick}
+                ></button>
               </div>
               <div className="modal-body">
                 <ul className="mb-0">
@@ -228,7 +286,9 @@ function NumberList() {
                 </ul>
               </div>
               <div className="modal-footer">
-                <Button variant="secondary" onClick={handleCloseHistoryClick}>Đóng</Button>
+                <Button variant="secondary" onClick={handleCloseHistoryClick}>
+                  Đóng
+                </Button>
               </div>
             </div>
           </div>
@@ -245,9 +305,9 @@ function NumberList() {
           <Modal.Body>
             {numberToToggle && (
               <p>
-                Bạn có chắc chắn muốn thay đổi trạng thái của số{' '}
-                <strong>{formatNumber(numberToToggle.value)}</strong> từ{' '}
-                <strong>{numberToToggle.state.toUpperCase()}</strong> sang{' '}
+                Bạn có chắc chắn muốn thay đổi trạng thái của số{" "}
+                <strong>{formatNumber(numberToToggle.value)}</strong> từ{" "}
+                <strong>{numberToToggle.state.toUpperCase()}</strong> sang{" "}
                 <strong>{nextState}</strong> không?
               </p>
             )}
@@ -265,12 +325,16 @@ function NumberList() {
 
       {/* Modal xác nhận tạo số ngẫu nhiên */}
       {showRandomConfirmModal && (
-        <Modal show={showRandomConfirmModal} onHide={handleCloseRandomConfirmModal}>
+        <Modal
+          show={showRandomConfirmModal}
+          onHide={handleCloseRandomConfirmModal}
+        >
           <Modal.Header closeButton>
             <Modal.Title>Xác Nhận Tạo Số Ngẫu Nhiên</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            Bạn có chắc chắn muốn tạo một số ngẫu nhiên có trạng thái TRUE không?
+            Bạn có chắc chắn muốn tạo một số ngẫu nhiên có trạng thái TRUE
+            không?
           </Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" onClick={handleCloseRandomConfirmModal}>
@@ -285,13 +349,18 @@ function NumberList() {
 
       {/* Modal thông báo tạo thành công */}
       {showRandomSuccessModal && (
-        <Modal show={showRandomSuccessModal} onHide={handleCloseRandomSuccessModal}>
+        <Modal
+          show={showRandomSuccessModal}
+          onHide={handleCloseRandomSuccessModal}
+        >
           <Modal.Header closeButton>
             <Modal.Title>Tạo Số Thành Công</Modal.Title>
           </Modal.Header>
           <Modal.Body>
             {lastCreatedRandomNumber && (
-              <p>Đã tạo thành công số: <strong>{lastCreatedRandomNumber}</strong></p>
+              <p>
+                Đã tạo thành công số: <strong>{lastCreatedRandomNumber}</strong>
+              </p>
             )}
           </Modal.Body>
           <Modal.Footer>
@@ -303,11 +372,13 @@ function NumberList() {
       )}
 
       <div className="number-grid mt-auto">
-        {numbers.map(item => (
+        {numbers.map((item) => (
           <div
             key={item.value}
             className={`number-list-cell clickable border rounded d-flex justify-content-center align-items-center ${
-              item.state === 'true' ? 'bg-danger text-white' : 'bg-light text-dark'
+              item.state === "true"
+                ? "bg-danger text-white"
+                : "bg-light text-dark"
             }`}
             onClick={() => confirmToggleState(item.value)}
           >
