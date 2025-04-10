@@ -5,13 +5,8 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import { Modal, Button } from "react-bootstrap";
 import { Row, Col, ProgressBar } from "react-bootstrap";
 
-const initialNumbersData = Array.from({ length: 370 }, (_, index) => ({
-  value: index + 1,
-  state: "false",
-}));
-
 function NumberList() {
-  const [numbers, setNumbers] = useState(initialNumbersData);
+  const [numbers, setNumbers] = useState([]); // Khởi tạo là một mảng rỗng
   const [history, setHistory] = useState([]);
   const [showHistoryModal, setShowHistoryModal] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -37,8 +32,13 @@ function NumberList() {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.json();
-      setNumbers(data.numbers || initialNumbersData);
-      setHistory(data.history || []);
+      if (data && data.numbers) {
+        setNumbers(data.numbers); // Chỉ cập nhật nếu có data.numbers
+      } else {
+        console.warn("API returned no 'numbers' data.");
+        // Có thể đặt một state lỗi cụ thể ở đây nếu cần
+      }
+      setHistory(data.history);
     } catch (e) {
       setError(e.message);
       console.error("Failed to load data:", e);
@@ -48,7 +48,6 @@ function NumberList() {
   };
 
   const saveData = async () => {
-    //console.log({ numbers });
     try {
       const response = await fetch(API_ENDPOINT, {
         method: "PUT",
@@ -75,7 +74,7 @@ function NumberList() {
     } else if (percentage >= 61 && percentage <= 100) {
       return "success";
     }
-    return "primary"; // Màu mặc định nếu không nằm trong các khoảng trên (ví dụ: lỗi giá trị)
+    return "primary";
   }
 
   useEffect(() => {
@@ -83,13 +82,13 @@ function NumberList() {
   }, []);
 
   useEffect(() => {
-    const sum = numbers.reduce((acc, curr) => acc + curr.value, 0);
+    const sum = numbers.reduce((acc, curr) => acc + (curr ? curr.value : 0), 0);
     setTotalSum(sum * 1000);
   }, [numbers]);
 
   useEffect(() => {
     const trueSum = numbers.reduce(
-      (acc, curr) => acc + (curr.state === "true" ? curr.value : 0),
+      (acc, curr) => acc + (curr && curr.state === "true" ? curr.value : 0),
       0
     );
     setCurrentTrueSum(trueSum * 1000);
@@ -104,11 +103,14 @@ function NumberList() {
   }, [currentTrueSum, totalSum]);
 
   useEffect(() => {
-    saveData();
+    // Chỉ gọi saveData khi numbers không phải là mảng rỗng ban đầu
+    if (numbers.length > 0) {
+      saveData();
+    }
   }, [numbers, history]);
 
   const formatNumber = (number) => {
-    return number.toString().padStart(3, "0");
+    return number ? number.toString().padStart(3, "0") : "---";
   };
 
   const formatCurrency = (amount) => {
@@ -128,7 +130,7 @@ function NumberList() {
   const toggleState = (value) => {
     setNumbers((prevNumbers) => {
       return prevNumbers.map((number) => {
-        if (number.value === value) {
+        if (number && number.value === value) {
           const oldState = number.state;
           const newState = number.state === "true" ? "false" : "true";
           logHistory(value, oldState, newState);
@@ -144,7 +146,9 @@ function NumberList() {
   };
 
   const handleConfirmRandomTrue = () => {
-    const falseNumbers = numbers.filter((number) => number.state === "false");
+    const falseNumbers = numbers.filter(
+      (number) => number && number.state === "false"
+    );
 
     if (falseNumbers.length > 0) {
       const randomIndex = Math.floor(Math.random() * falseNumbers.length);
@@ -152,7 +156,7 @@ function NumberList() {
 
       setNumbers((prevNumbers) => {
         return prevNumbers.map((number) => {
-          if (number.value === randomNumberToUpdate) {
+          if (number && number.value === randomNumberToUpdate) {
             logHistory(randomNumberToUpdate, number.state, "true");
             setLastCreatedRandomNumber(formatNumber(randomNumberToUpdate));
             setShowRandomSuccessModal(true);
@@ -175,7 +179,7 @@ function NumberList() {
   };
 
   const confirmToggleState = (value) => {
-    const number = numbers.find((number) => number.value === value);
+    const number = numbers.find((number) => number && number.value === value);
     if (number) {
       setNumberToToggle(number);
       setNextState(number.state === "true" ? "FALSE" : "TRUE");
@@ -216,15 +220,9 @@ function NumberList() {
 
   return (
     <div className="container">
-      {/* =========== */}
       <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          width: "100%",
-          margin: "0 auto",
-        }}
+        className="button-container"
+        style={{ width: "100%", margin: "0 auto" }}
       >
         <button onClick={createRandomTrue} className="btn btn-primary">
           <span className="d-none d-md-inline-block">TẠO NGẪU NHIÊN</span>
@@ -232,8 +230,7 @@ function NumberList() {
             <i className="bi bi-plus-circle"></i>
           </span>
         </button>
-        <div style={{ textAlign: "center", flexShrink: 0 }}>
-          {/* Logo M&H và SAVING MONEY ở giữa */}
+        <div className="logo-container">
           <span>
             <img
               src="/android-chrome-512x512.png"
@@ -266,13 +263,12 @@ function NumberList() {
           </span>
         </button>
       </div>
-      {/* =========== */}
 
       <Row className="mb-3 align-items-center justify-content-between">
         <Col
           xs={12}
           md="auto"
-          className="mb-2 mb-md-0 text-md-left text-center"
+          className="mb-2 mb-md-0 text-md-left text-center goal-for-container"
         >
           <i className="bi bi-flag mr-2" style={{ color: "#777" }}></i>
           <span>&nbsp;Goal for 2025:</span>{" "}
@@ -292,6 +288,8 @@ function NumberList() {
           md="auto"
           className="text-right d-flex align-items-center justify-content-end"
         >
+          {" "}
+          {/* Căn phải */}
           <span className="mr-2 d-none d-md-inline">Progress:&nbsp;</span>
           <ProgressBar
             animated
@@ -303,7 +301,6 @@ function NumberList() {
         </Col>
       </Row>
 
-      {/* Modal lịch sử */}
       {showHistoryModal && (
         <div
           className="modal fade show"
@@ -339,7 +336,6 @@ function NumberList() {
       )}
       {showHistoryModal && <div className="modal-backdrop fade show"></div>}
 
-      {/* Modal xác nhận thay đổi trạng thái */}
       {showConfirmModal && (
         <Modal show={showConfirmModal} onHide={handleCloseConfirmModal}>
           <Modal.Header closeButton>
@@ -366,7 +362,6 @@ function NumberList() {
         </Modal>
       )}
 
-      {/* Modal xác nhận tạo số ngẫu nhiên */}
       {showRandomConfirmModal && (
         <Modal
           show={showRandomConfirmModal}
@@ -390,7 +385,6 @@ function NumberList() {
         </Modal>
       )}
 
-      {/* Modal thông báo tạo thành công */}
       {showRandomSuccessModal && (
         <Modal
           show={showRandomSuccessModal}
@@ -417,15 +411,15 @@ function NumberList() {
       <div className="number-grid mt-auto">
         {numbers.map((item) => (
           <div
-            key={item.value}
+            key={item ? item.value : index} // Thêm key dự phòng nếu item null
             className={`number-list-cell clickable border rounded d-flex justify-content-center align-items-center ${
-              item.state === "true"
+              item && item.state === "true"
                 ? "bg-danger text-white"
                 : "bg-light text-dark"
             }`}
-            onClick={() => confirmToggleState(item.value)}
+            onClick={() => item && confirmToggleState(item.value)}
           >
-            {formatNumber(item.value)}
+            {formatNumber(item && item.value)}
           </div>
         ))}
       </div>
