@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "../styles/NumberList.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
@@ -6,7 +6,7 @@ import { Modal, Button } from "react-bootstrap";
 import { Row, Col, ProgressBar } from "react-bootstrap";
 
 function NumberList() {
-  const [numbers, setNumbers] = useState([]); // Khởi tạo là một mảng rỗng
+  const [numbers, setNumbers] = useState([]);
   const [history, setHistory] = useState([]);
   const [showHistoryModal, setShowHistoryModal] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -22,6 +22,8 @@ function NumberList() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const API_ENDPOINT = "https://67f1267ac733555e24ac4c9b.mockapi.io/api/data/1";
+  const headerRef = useRef(null);
+  const [headerHeight, setHeaderHeight] = useState(0);
 
   const loadData = async () => {
     setLoading(true);
@@ -33,10 +35,9 @@ function NumberList() {
       }
       const data = await response.json();
       if (data && data.numbers) {
-        setNumbers(data.numbers); // Chỉ cập nhật nếu có data.numbers
+        setNumbers(data.numbers);
       } else {
         console.warn("API returned no 'numbers' data.");
-        // Có thể đặt một state lỗi cụ thể ở đây nếu cần
       }
       setHistory(data.history);
     } catch (e) {
@@ -103,7 +104,6 @@ function NumberList() {
   }, [currentTrueSum, totalSum]);
 
   useEffect(() => {
-    // Chỉ gọi saveData khi numbers không phải là mảng rỗng ban đầu
     if (numbers.length > 0) {
       saveData();
     }
@@ -208,6 +208,21 @@ function NumberList() {
     setShowHistoryModal(false);
   };
 
+  useEffect(() => {
+    const updateHeaderHeight = () => {
+      if (headerRef.current) {
+        setHeaderHeight(headerRef.current.offsetHeight);
+      }
+    };
+
+    updateHeaderHeight();
+    window.addEventListener('resize', updateHeaderHeight);
+
+    return () => {
+      window.removeEventListener('resize', updateHeaderHeight);
+    };
+  }, []);
+
   if (loading) {
     return <div className="text-center">Đang tải dữ liệu...</div>;
   }
@@ -220,86 +235,101 @@ function NumberList() {
 
   return (
     <div className="container">
-      <div
-        className="button-container"
-        style={{ width: "100%", margin: "0 auto" }}
-      >
-        <button onClick={createRandomTrue} className="btn btn-primary">
-          <span className="d-none d-md-inline-block">TẠO NGẪU NHIÊN</span>
-          <span className="d-inline-block d-md-none" aria-hidden="true">
-            <i className="bi bi-plus-circle"></i>
-          </span>
-        </button>
-        <div className="logo-container">
-          <span>
-            <img
-              src="/android-chrome-512x512.png"
-              alt="Logo M&H"
-              className="img-fluid"
-              style={{
-                maxHeight: "50px",
-                marginRight: "5px",
-                verticalAlign: "middle",
-              }}
-            />
-            SAVING MONEY
-          </span>
+      <div ref={headerRef} className="bg-light shadow-sm" style={{ width: "100%", zIndex: 1000, position: 'sticky', top: 0 }}>
+        <div className="button-container p-2">
+          <button onClick={createRandomTrue} className="btn btn-primary">
+            <span className="d-none d-md-inline-block">TẠO NGẪU NHIÊN</span>
+            <span className="d-inline-block d-md-none" aria-hidden="true">
+              <i className="bi bi-plus-circle"></i>
+            </span>
+          </button>
+          <div className="logo-container">
+            <span>
+              <img
+                src="/android-chrome-512x512.png"
+                alt="Logo M&H"
+                className="img-fluid"
+                style={{
+                  maxHeight: "50px",
+                  marginRight: "5px",
+                  verticalAlign: "middle",
+                }}
+              />
+              SAVING MONEY
+            </span>
+          </div>
+          <button
+            onClick={handleShowHistoryClick}
+            className="btn btn-info"
+            style={{
+              width: "auto",
+              minWidth: "0",
+              backgroundColor: "#007bff",
+              borderColor: "#007bff",
+            }}
+          >
+            <span className="d-none d-md-inline-block">
+              &nbsp;&nbsp;XEM LỊCH SỬ&nbsp;&nbsp;
+            </span>
+            <span className="d-inline-block d-md-none" aria-hidden="true">
+              <i className="bi bi-clock-history"></i>
+            </span>
+          </button>
         </div>
-        <button
-          onClick={handleShowHistoryClick}
-          className="btn btn-info"
-          style={{
-            width: "auto",
-            minWidth: "0",
-            backgroundColor: "#007bff",
-            borderColor: "#007bff",
-          }}
-        >
-          <span className="d-none d-md-inline-block">
-            &nbsp;&nbsp;XEM LỊCH SỬ&nbsp;&nbsp;
-          </span>
-          <span className="d-inline-block d-md-none" aria-hidden="true">
-            <i className="bi bi-clock-history"></i>
-          </span>
-        </button>
+
+        <Row className="mb-3 align-items-center justify-content-between p-2">
+          <Col
+            xs={12}
+            md="auto"
+            className="mb-2 mb-md-0 text-md-left text-center goal-for-container"
+          >
+            <i className="bi bi-flag mr-2" style={{ color: "#777" }}></i>
+            <span>&nbsp;Goal for 2025:</span>{" "}
+            <strong className="ml-1">{formatCurrency(totalSum)}</strong>
+          </Col>
+          <Col xs={12} md="auto" className="mb-2 mb-md-0 text-center">
+            {" "}
+            {/* Giữ căn giữa cho "Current" */}
+            <i className="bi bi-wallet mr-2" style={{ color: "green" }}></i>
+            <span>&nbsp;Current:</span>{" "}
+            <strong className="ml-1" style={{ color: "green" }}>
+              {formatCurrency(currentTrueSum)}
+            </strong>
+          </Col>
+          <Col
+            xs={12}
+            md="auto"
+            className="text-right d-flex align-items-center justify-content-end"
+          >
+            {" "}
+            {/* Căn phải */}
+            <span className="mr-2 d-none d-md-inline">Progress:&nbsp;</span>
+            <ProgressBar
+              animated
+              now={parseFloat(completionPercentage)}
+              label={`${completionPercentage}%`}
+              variant={getProgressBarVariant(parseFloat(completionPercentage))}
+              style={{ width: "100%", minWidth: "150px", marginTop: "0" }}
+            />
+          </Col>
+        </Row>
       </div>
 
-      <Row className="mb-3 align-items-center justify-content-between">
-        <Col
-          xs={12}
-          md="auto"
-          className="mb-2 mb-md-0 text-md-left text-center goal-for-container"
-        >
-          <i className="bi bi-flag mr-2" style={{ color: "#777" }}></i>
-          <span>&nbsp;Goal for 2025:</span>{" "}
-          <strong className="ml-1">{formatCurrency(totalSum)}</strong>
-        </Col>
-        <Col xs={12} md="auto" className="mb-2 mb-md-0 text-center">
-          {" "}
-          {/* Giữ căn giữa cho "Current" */}
-          <i className="bi bi-wallet mr-2" style={{ color: "green" }}></i>
-          <span>&nbsp;Current:</span>{" "}
-          <strong className="ml-1" style={{ color: "green" }}>
-            {formatCurrency(currentTrueSum)}
-          </strong>
-        </Col>
-        <Col
-          xs={12}
-          md="auto"
-          className="text-right d-flex align-items-center justify-content-end"
-        >
-          {" "}
-          {/* Căn phải */}
-          <span className="mr-2 d-none d-md-inline">Progress:&nbsp;</span>
-          <ProgressBar
-            animated
-            now={parseFloat(completionPercentage)}
-            label={`${completionPercentage}%`}
-            variant={getProgressBarVariant(parseFloat(completionPercentage))}
-            style={{ width: "100%", minWidth: "150px", marginTop: "0" }}
-          />
-        </Col>
-      </Row>
+      <div className="number-grid mt-3" style={{ padding: '1px' }}>
+        {numbers.map((item, index) => (
+          <div
+            key={item ? item.value : index}
+            className={`number-list-cell clickable border rounded d-flex justify-content-center align-items-center ${
+              item && item.state === "true"
+                ? "bg-danger text-white"
+                : "bg-light text-dark"
+            }`}
+            onClick={() => item && confirmToggleState(item.value)}
+          >
+            {formatNumber(item && item.value)}
+          </div>
+        ))}
+      </div>
 
       {showHistoryModal && (
         <div
@@ -371,8 +401,7 @@ function NumberList() {
             <Modal.Title>Xác Nhận Tạo Số Ngẫu Nhiên</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            Bạn có chắc chắn muốn tạo một số ngẫu nhiên có trạng thái TRUE
-            không?
+            Bạn có chắc chắn muốn tạo một số ngẫu nhiên có trạng thái TRUE không?
           </Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" onClick={handleCloseRandomConfirmModal}>
@@ -407,22 +436,6 @@ function NumberList() {
           </Modal.Footer>
         </Modal>
       )}
-
-      <div className="number-grid mt-auto">
-        {numbers.map((item) => (
-          <div
-            key={item ? item.value : index} // Thêm key dự phòng nếu item null
-            className={`number-list-cell clickable border rounded d-flex justify-content-center align-items-center ${
-              item && item.state === "true"
-                ? "bg-danger text-white"
-                : "bg-light text-dark"
-            }`}
-            onClick={() => item && confirmToggleState(item.value)}
-          >
-            {formatNumber(item && item.value)}
-          </div>
-        ))}
-      </div>
     </div>
   );
 }
