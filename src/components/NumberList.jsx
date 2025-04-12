@@ -134,10 +134,9 @@ function NumberList() {
     const date = now.toLocaleDateString();
     const time = now.toLocaleTimeString();
     const timestamp = `${date} ${time}`;
-    const message = `Số ${formattedValue} | ${oldState.toUpperCase()} -> ${newState.toUpperCase()}`;
+    const message = `${timestamp} | ${formattedValue} | ${newState==="true"?"circle-fill":"circle"} | ${action}`;
     setHistory((prevHistory) => [
-      ...prevHistory,
-      `${timestamp} | ${message} | ${action}`,
+      ...prevHistory,message,
     ]);
   };
 
@@ -149,9 +148,9 @@ function NumberList() {
           const newState = number.state === "true" ? "false" : "true";
           logHistory(
             value,
-            oldState === "true" ? "BẬT" : "TẮT",
-            newState === "true" ? "BẬT" : "TẮT",
-            "T. CHỈNH"
+            oldState,
+            newState,
+            "MOD"
           );
           return { ...number, state: newState };
         }
@@ -176,7 +175,7 @@ function NumberList() {
       setNumbers((prevNumbers) => {
         return prevNumbers.map((number) => {
           if (number && number.value === randomNumberToUpdate) {
-            logHistory(randomNumberToUpdate, "TẮT", "BẬT", "RANDOM");
+            logHistory(randomNumberToUpdate, "false", "true", "RAND");
             setLastCreatedRandomNumber(formatNumber(randomNumberToUpdate));
             setShowRandomSuccessModal(true);
             return { ...number, state: "true" };
@@ -444,31 +443,31 @@ function NumberList() {
               </div>
               <div className="modal-body">
                 <Row className="mb-2" style={{ fontWeight: "bold" }}>
-                  <Col sm={4} xs={4} style={{ color: colors.secondary }}>
+                  <Col sm={5} xs={5} style={{ color: colors.secondary }}>
                     Thời Gian
                   </Col>
                   <Col sm={2} xs={2} style={{ color: colors.secondary }}>
                     Số
                   </Col>
-                  <Col sm={3} xs={3} style={{ color: colors.secondary }}>
-                    Thông Tin
+                  <Col sm={2} xs={2} style={{ color: colors.secondary }}>
+                    On/Off
                   </Col>
                   <Col sm={3} xs={3} style={{ color: colors.secondary }}>
-                    Hành Động
+                    Action
                   </Col>
                 </Row>
                 {history.map((entry, index) => {
                   const parts = entry.split(" | ");
                   return (
                     <Row key={index} className="mb-1">
-                      <Col sm={4} xs={4} style={{ color: colors.text }}>
+                      <Col sm={5} xs={5} style={{ color: colors.text }}>
                         {parts[0]}
                       </Col>
                       <Col sm={2} xs={2} style={{ color: colors.text }}>
                         {parts[1]}
                       </Col>
-                      <Col sm={3} xs={3} style={{ color: colors.text }}>
-                        {parts[2]}
+                      <Col sm={2} xs={2} style={{ color: colors.text }}>
+                        <i className={`bi bi-${parts[2]}`}></i>
                       </Col>
                       <Col sm={3} xs={3} style={{ color: colors.text }}>
                         {parts[3]}
@@ -493,6 +492,8 @@ function NumberList() {
                     backgroundColor: colors.secondary,
                     borderColor: colors.secondary,
                     color: colors.text,
+                    opacity: 0.5,
+                    fontWeight: "bold",
                   }}
                 >
                   Đóng
