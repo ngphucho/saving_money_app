@@ -134,10 +134,10 @@ function NumberList() {
     const date = now.toLocaleDateString();
     const time = now.toLocaleTimeString();
     const timestamp = `${date} ${time}`;
-    const message = `${timestamp} | ${formattedValue} | ${newState==="true"?"circle-fill":"circle"} | ${action}`;
-    setHistory((prevHistory) => [
-      ...prevHistory,message,
-    ]);
+    const message = `${timestamp} | ${formattedValue} | ${
+      newState === "true" ? "circle-fill" : "circle"
+    } | ${action}`;
+    setHistory((prevHistory) => [...prevHistory, message]);
   };
 
   const toggleState = (value) => {
@@ -146,12 +146,7 @@ function NumberList() {
         if (number && number.value === value) {
           const oldState = number.state;
           const newState = number.state === "true" ? "false" : "true";
-          logHistory(
-            value,
-            oldState,
-            newState,
-            "MOD"
-          );
+          logHistory(value, oldState, newState, "MOD");
           return { ...number, state: newState };
         }
         return number;
@@ -443,7 +438,7 @@ function NumberList() {
               </div>
               <div className="modal-body">
                 <Row className="mb-2" style={{ fontWeight: "bold" }}>
-                  <Col sm={5} xs={5} style={{ color: colors.secondary }}>
+                  <Col sm={6} xs={6} style={{ color: colors.secondary }}>
                     Thời Gian
                   </Col>
                   <Col sm={2} xs={2} style={{ color: colors.secondary }}>
@@ -452,7 +447,7 @@ function NumberList() {
                   <Col sm={2} xs={2} style={{ color: colors.secondary }}>
                     On/Off
                   </Col>
-                  <Col sm={3} xs={3} style={{ color: colors.secondary }}>
+                  <Col sm={2} xs={2} style={{ color: colors.secondary }}>
                     Action
                   </Col>
                 </Row>
@@ -460,7 +455,7 @@ function NumberList() {
                   const parts = entry.split(" | ");
                   return (
                     <Row key={index} className="mb-1">
-                      <Col sm={5} xs={5} style={{ color: colors.text }}>
+                      <Col sm={6} xs={6} style={{ color: colors.text }}>
                         {parts[0]}
                       </Col>
                       <Col sm={2} xs={2} style={{ color: colors.text }}>
@@ -469,7 +464,7 @@ function NumberList() {
                       <Col sm={2} xs={2} style={{ color: colors.text }}>
                         <i className={`bi bi-${parts[2]}`}></i>
                       </Col>
-                      <Col sm={3} xs={3} style={{ color: colors.text }}>
+                      <Col sm={2} xs={2} style={{ color: colors.text }}>
                         {parts[3]}
                       </Col>
                     </Row>
