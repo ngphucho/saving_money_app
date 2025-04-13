@@ -462,94 +462,73 @@ function NumberList() {
       </div>
 
       {showHistoryModal && (
-        <div
-          className="modal fade show"
-          style={{ display: "block", backgroundColor: "rgba(0,0,0,0.5)" }}
-          tabIndex="-1"
+        <Modal
+          show={showHistoryModal}
+          onHide={handleCloseHistoryClick}
+          style={{ color: colors.text }}
         >
-          <div className="modal-dialog modal-dialog-scrollable">
-            <div
-              className="modal-content"
-              style={{ backgroundColor: colors.background, color: colors.text }}
-            >
-              <div
-                className="modal-header"
-                style={{ backgroundColor: colors.light }}
-              >
-                <h5 className="modal-title" style={{ color: colors.text }}>
-                  Lịch Sử Thay Đổi Trạng Thái
-                </h5>
-                <button
-                  type="button"
-                  className="btn-close"
-                  aria-label="Close"
-                  onClick={handleCloseHistoryClick}
-                  style={{ backgroundColor: colors.secondary, opacity: 0.5 }}
-                ></button>
-              </div>
-              <div className="modal-body">
-                <Row className="mb-2" style={{ fontWeight: "bold" }}>
-                  <Col sm={6} xs={6} style={{ color: colors.secondary }}>
-                    Thời Gian
+          <Modal.Header closeButton style={{ backgroundColor: colors.light }}>
+            <Modal.Title style={{ color: colors.text }}>
+              Lịch Sử Thao Tác
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body
+            style={{ backgroundColor: colors.background, color: colors.text }}
+          >
+            <Row className="mb-2" style={{ fontWeight: "bold" }}>
+              <Col sm={6} xs={6} style={{ color: colors.secondary }}>
+                Thời Gian
+              </Col>
+              <Col sm={2} xs={2} style={{ color: colors.secondary }}>
+                Số
+              </Col>
+              <Col sm={2} xs={2} style={{ color: colors.secondary }}>
+                On/Off
+              </Col>
+              <Col sm={2} xs={2} style={{ color: colors.secondary }}>
+                Action
+              </Col>
+            </Row>
+            {history.map((entry, index) => {
+              const parts = entry.split(" | ");
+              return (
+                <Row key={index} className="mb-1">
+                  <Col sm={6} xs={6} style={{ color: colors.text }}>
+                    {parts[0]}
                   </Col>
-                  <Col sm={2} xs={2} style={{ color: colors.secondary }}>
-                    Số
+                  <Col sm={2} xs={2} style={{ color: colors.text }}>
+                    {parts[1]}
                   </Col>
-                  <Col sm={2} xs={2} style={{ color: colors.secondary }}>
-                    On/Off
+                  <Col sm={2} xs={2} style={{ color: colors.text }}>
+                    <i className={`bi bi-${parts[2]}`}></i>
                   </Col>
-                  <Col sm={2} xs={2} style={{ color: colors.secondary }}>
-                    Action
+                  <Col sm={2} xs={2} style={{ color: colors.text }}>
+                    {parts[3]}
                   </Col>
                 </Row>
-                {history.map((entry, index) => {
-                  const parts = entry.split(" | ");
-                  return (
-                    <Row key={index} className="mb-1">
-                      <Col sm={6} xs={6} style={{ color: colors.text }}>
-                        {parts[0]}
-                      </Col>
-                      <Col sm={2} xs={2} style={{ color: colors.text }}>
-                        {parts[1]}
-                      </Col>
-                      <Col sm={2} xs={2} style={{ color: colors.text }}>
-                        <i className={`bi bi-${parts[2]}`}></i>
-                      </Col>
-                      <Col sm={2} xs={2} style={{ color: colors.text }}>
-                        {parts[3]}
-                      </Col>
-                    </Row>
-                  );
-                })}
-                {history.length === 0 && (
-                  <p className="text-center" style={{ color: colors.text }}>
-                    Chưa có lịch sử thay đổi.
-                  </p>
-                )}
-              </div>
-              <div
-                className="modal-footer"
-                style={{ backgroundColor: colors.light }}
-              >
-                <Button
-                  variant="secondary"
-                  onClick={handleCloseHistoryClick}
-                  style={{
-                    backgroundColor: colors.secondary,
-                    borderColor: colors.secondary,
-                    color: colors.text,
-                    opacity: 0.5,
-                    fontWeight: "bold",
-                  }}
-                >
-                  Đóng
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
+              );
+            })}
+            {history.length === 0 && (
+              <p className="text-center" style={{ color: colors.text }}>
+                Chưa có lịch sử thay đổi.
+              </p>
+            )}
+          </Modal.Body>
+          <Modal.Footer style={{ backgroundColor: colors.light }}>
+            <Button
+              variant="primary"
+              onClick={handleCloseHistoryClick}
+              style={{
+                backgroundColor: colors.primary,
+                borderColor: colors.primary,
+                color: "white",
+              }}
+            >
+              Đóng
+            </Button>
+          </Modal.Footer>
+        </Modal>
       )}
-      {showHistoryModal && <div className="modal-backdrop fade show"></div>}
 
       {showConfirmModal && (
         <Modal
