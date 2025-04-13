@@ -545,15 +545,21 @@ function NumberList() {
             {numberToToggle && (
               <p style={{ color: colors.text }}>
                 Thay đổi trạng thái của số{" "}
-                <strong style={{ color: colors.primary }}>
+                <strong style={{ color: colors.text }}>
                   {formatNumber(numberToToggle.value)}
                 </strong>{" "}
                 từ{" "}
-                <strong style={{ color: colors.secondary }}>
-                  {numberToToggle.state === "true" ? "BẬT" : "TẮT"}
-                </strong>{" "}
+                <i
+                  className={`bi bi-${
+                    numberToToggle.state === "true" ? "circle-fill" : "circle"
+                  }`}
+                ></i>{" "}
                 sang{" "}
-                <strong style={{ color: colors.primary }}>{nextState}</strong>
+                <i
+                  className={`bi bi-${
+                    numberToToggle.state === "true" ? "circle" : "circle-fill"
+                  }`}
+                ></i>
               </p>
             )}
           </Modal.Body>
