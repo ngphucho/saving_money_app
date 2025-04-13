@@ -2,12 +2,17 @@ import React, { useState, useEffect, useRef } from "react";
 import "../styles/NumberList.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
-import { Modal, Button } from "react-bootstrap";
-import { Row, Col, ProgressBar } from "react-bootstrap";
+import { Row, Col, ProgressBar, Form, Modal, Button } from "react-bootstrap";
+import AdminPanel from "./AdminPanel";
 
 function NumberList() {
   const [numbers, setNumbers] = useState([]);
   const [history, setHistory] = useState([]);
+  const [year, setYear] = useState(null); // Thêm state year
+  const [showAdminPanel, setShowAdminPanel] = useState(false); // State để điều khiển hiển thị AdminPanel
+  const [showAuthModal, setShowAuthModal] = useState(false); // State để điều khiển modal xác thực
+  const [authCode, setAuthCode] = useState("");
+  const [authError, setAuthError] = useState("");
   const [showHistoryModal, setShowHistoryModal] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [numberToToggle, setNumberToToggle] = useState(null);
@@ -48,6 +53,7 @@ function NumberList() {
         console.warn("API returned no 'numbers' data.");
       }
       setHistory(data.history);
+      setYear(data.year); // Lấy giá trị year từ response
     } catch (e) {
       setError(e.message);
       console.error("Failed to load data:", e);
@@ -63,7 +69,7 @@ function NumberList() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ numbers, history }),
+        body: JSON.stringify({ numbers, history, year }),
       });
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -73,6 +79,47 @@ function NumberList() {
       setError(e.message);
       console.error("Failed to save data:", e);
     }
+  };
+
+  const handleShowAdminPanelRequest = () => {
+    setShowAuthModal(true);
+    setAuthCode("");
+    setAuthError("");
+  };
+
+  const handleCloseAuthModal = () => {
+    setShowAuthModal(false);
+    setAuthCode("");
+    setAuthError("");
+  };
+
+  const handleAuthCodeChange = (event) => {
+    setAuthCode(event.target.value);
+  };
+
+  const handleOpenAdminPanel = () => {
+    if (authCode === "123456") {
+      setShowAdminPanel(true);
+      setShowAuthModal(false);
+      setAuthCode("");
+      setAuthError("");
+    } else {
+      setAuthError("Mã xác thực không đúng.");
+    }
+  };
+
+  const handleCloseAdminPanel = () => {
+    setShowAdminPanel(false);
+  };
+
+  const handleResetNumbers = (newNumbers, newHistory, newYear) => {
+    setNumbers(newNumbers);
+    setHistory(newHistory);
+    setYear(newYear);
+  };
+
+  const handleShowAdminPanel = () => {
+    setShowAdminPanel(true);
   };
 
   function getProgressBarVariant(percentage) {
@@ -115,7 +162,7 @@ function NumberList() {
     if (numbers.length > 0) {
       saveData();
     }
-  }, [numbers, history]);
+  }, [numbers, history, year]);
 
   const formatNumber = (number) => {
     return number ? number.toString().padStart(3, "0") : "---";
@@ -285,7 +332,11 @@ function NumberList() {
               <i className="bi bi-plus-circle"></i>
             </span>
           </button>
-          <div className="logo-container">
+          <div
+            className="logo-container"
+            onClick={handleShowAdminPanelRequest}
+            style={{ cursor: "pointer" }}
+          >
             <span>
               <img
                 src="/android-chrome-512x512.png"
@@ -338,7 +389,7 @@ function NumberList() {
               style={{ color: colors.secondary }}
             ></i>{" "}
             {/* Icon mục tiêu hồng đậm */}
-            <span>Goal for 2025:&nbsp;</span>
+            <span>Goal for {year}:&nbsp;</span>
             <strong className="ml-1" style={{ color: colors.primary }}>
               {formatCurrency(totalSum)}
             </strong>{" "}
@@ -635,6 +686,44 @@ function NumberList() {
           </Modal.Footer>
         </Modal>
       )}
+
+      <AdminPanel
+        show={showAdminPanel}
+        onResetNumbers={handleResetNumbers}
+        onHide={handleCloseAdminPanel}
+      />
+
+      {/* Modal xác thực trước khi mở AdminPanel */}
+      <Modal show={showAuthModal} onHide={handleCloseAuthModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Xác thực Admin</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            <Form.Group className="mb-3" controlId="formAuthCode">
+              <Form.Label>Nhập mã xác thực:</Form.Label>
+              <Form.Control
+                type="password"
+                placeholder="Mã xác thực"
+                value={authCode}
+                onChange={handleAuthCodeChange}
+                isInvalid={!!authError}
+              />
+              <Form.Control.Feedback type="invalid">
+                {authError}
+              </Form.Control.Feedback>
+            </Form.Group>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseAuthModal}>
+            Hủy
+          </Button>
+          <Button variant="primary" onClick={handleOpenAdminPanel}>
+            Xác nhận
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 }
