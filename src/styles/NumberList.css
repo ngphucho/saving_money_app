@@ -19,7 +19,6 @@
   display: grid;
   gap: 2px;
   grid-template-columns: repeat(auto-fit, minmax(40px, 1fr));
-  flex-grow: 1;
 }
 
 .number-list-cell {
