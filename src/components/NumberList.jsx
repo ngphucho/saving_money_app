@@ -4,6 +4,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import { Row, Col, ProgressBar, Form, Modal, Button } from "react-bootstrap";
 import AdminPanel from "./AdminPanel";
+import LoadingComponent from "./LoadingComponent";
 
 function NumberList() {
   const [numbers, setNumbers] = useState([]);
@@ -284,7 +285,11 @@ function NumberList() {
   }, []);
 
   if (loading) {
-    return <div className="text-center">Đang tải dữ liệu...</div>;
+    return (
+      <div className="text-center">
+        <LoadingComponent />
+      </div>
+    );
   }
 
   if (error) {
