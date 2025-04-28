@@ -59,7 +59,10 @@ function NumberList() {
       setError(e.message);
       console.error("Failed to load data:", e);
     } finally {
-      setLoading(false);
+      setTimeout(() => {
+        setLoading(false);
+      }, 2000);
+      //setLoading(false);
     }
   };
 
