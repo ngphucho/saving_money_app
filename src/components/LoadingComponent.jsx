@@ -8,7 +8,7 @@ function App() {
 
   useEffect(() => {
     const randomNumber = Math.floor(Math.random() * numberOfAnimations) + 1;
-    const animationPath = `/assets/loading${randomNumber}.json`; // Đường dẫn động
+    const animationPath = `/src/assets/loading${randomNumber}.json`; // Đường dẫn động
 
     import(animationPath)
       .then((module) => {
