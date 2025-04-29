@@ -1,23 +1,19 @@
 import React, { useState, useEffect } from "react";
 import Lottie from "react-lottie";
 import "bootstrap/dist/css/bootstrap.min.css";
+import loading1 from "../assets/loading1.json";
+import loading2 from "../assets/loading2.json";
+import loading3 from "../assets/loading3.json";
+import loading4 from "../assets/loading4.json";
+import loading5 from "../assets/loading5.json";
 
 function App() {
   const [animationData, setAnimationData] = useState(null);
-  const numberOfAnimations = 5; // Số lượng file animation của bạn
+  const animations = [loading1, loading2, loading3, loading4, loading5];
 
   useEffect(() => {
-    const randomNumber = Math.floor(Math.random() * numberOfAnimations) + 1;
-    const animationPath = `../loading${randomNumber}.json`; // Đường dẫn động
-
-    import(animationPath)
-      .then((module) => {
-        setAnimationData(module.default);
-      })
-      .catch((error) => {
-        console.error("Lỗi import animation data:", error);
-        // Xử lý lỗi nếu không import được file (ví dụ: hiển thị animation mặc định)
-      });
+    const randomIndex = Math.floor(Math.random() * animations.length);
+    setAnimationData(animations[randomIndex]);
   }, []);
 
   const defaultOptions = {
