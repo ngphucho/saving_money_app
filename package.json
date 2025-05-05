@@ -15,7 +15,8 @@
     "react": "^19.0.0",
     "react-bootstrap": "2.10.9",
     "react-dom": "^19.0.0",
-    "react-lottie": "1.2.10"
+    "react-lottie": "1.2.10",
+    "react-slot-counter": "3.3.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.16.0",

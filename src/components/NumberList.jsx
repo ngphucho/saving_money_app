@@ -5,6 +5,7 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import { Row, Col, ProgressBar, Form, Modal, Button } from "react-bootstrap";
 import AdminPanel from "./AdminPanel";
 import LoadingComponent from "./LoadingComponent";
+import SlotCounterComponent from "./SlotCounterComponent";
 
 function NumberList() {
   const [numbers, setNumbers] = useState([]);
