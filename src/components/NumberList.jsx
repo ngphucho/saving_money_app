@@ -649,18 +649,21 @@ function NumberList() {
           style={{ color: colors.text }}
         >
           <Modal.Header closeButton style={{ backgroundColor: colors.light }}>
-            <Modal.Title style={{ color: colors.text }}>
-              Tạo Số Thành Công
-            </Modal.Title>
+            <Modal.Title style={{ color: colors.text }}>Quay Số</Modal.Title>
           </Modal.Header>
           <Modal.Body
             style={{ backgroundColor: colors.background, color: colors.text }}
           >
             {lastCreatedRandomNumber && (
-              <p style={{ color: colors.text }}>
-                Đã quay được số:{" "}
-                <strong style={{ color: colors.secondary }}>
-                  {lastCreatedRandomNumber}
+              <p
+                style={{
+                  color: colors.secondary,
+                  fontSize: "4em",
+                  textAlign: "center",
+                }}
+              >
+                <strong>
+                  <SlotCounterComponent number={lastCreatedRandomNumber} />
                 </strong>
               </p>
             )}

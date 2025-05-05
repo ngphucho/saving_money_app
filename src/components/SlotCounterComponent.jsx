@@ -7,8 +7,10 @@ export default function SlotCounterComponent({ number }) {
   useEffect(() => {
     const numberString = String(number).padStart(3, "0");
     const digits = numberString.split("");
-    setNumbers(digits);
-  }, [number]);
+    setTimeout(() => {
+      setNumbers(digits);
+    }, 1000);
+  });
 
   return (
     <div style={{ display: "inline" }}>
@@ -16,7 +18,7 @@ export default function SlotCounterComponent({ number }) {
         startValue={["?", "?", "?"]}
         value={numbers}
         duration={2}
-        autoAnimationStart={true}
+        autoAnimationStart={false}
         animateUnchanged={true}
         delay={0.5}
       />
