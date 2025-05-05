@@ -475,6 +475,10 @@ function NumberList() {
           show={showHistoryModal}
           onHide={handleCloseHistoryClick}
           style={{ color: colors.text }}
+          centered
+          backdrop="static"
+          keyboard={false}
+          scrollable={true}
         >
           <Modal.Header closeButton style={{ backgroundColor: colors.light }}>
             <Modal.Title style={{ color: colors.text }}>
@@ -544,6 +548,9 @@ function NumberList() {
           show={showConfirmModal}
           onHide={handleCloseConfirmModal}
           style={{ color: colors.text }}
+          centered
+          backdrop="static"
+          keyboard={false}
         >
           <Modal.Header closeButton style={{ backgroundColor: colors.light }}>
             <Modal.Title style={{ color: colors.text }}>
@@ -604,6 +611,9 @@ function NumberList() {
           show={showRandomConfirmModal}
           onHide={handleCloseRandomConfirmModal}
           style={{ color: colors.text }}
+          centered
+          backdrop="static"
+          keyboard={false}
         >
           <Modal.Header closeButton style={{ backgroundColor: colors.light }}>
             <Modal.Title style={{ color: colors.text }}>
@@ -647,6 +657,9 @@ function NumberList() {
           show={showRandomSuccessModal}
           onHide={handleCloseRandomSuccessModal}
           style={{ color: colors.text }}
+          centered
+          backdrop="static"
+          keyboard={false}
         >
           <Modal.Header closeButton style={{ backgroundColor: colors.light }}>
             <Modal.Title style={{ color: colors.text }}>Quay Số</Modal.Title>
@@ -691,7 +704,13 @@ function NumberList() {
       />
 
       {/* Modal xác thực trước khi mở AdminPanel */}
-      <Modal show={showAuthModal} onHide={handleCloseAuthModal}>
+      <Modal
+        show={showAuthModal}
+        onHide={handleCloseAuthModal}
+        centered
+        backdrop="static"
+        keyboard={false}
+      >
         <Modal.Header closeButton>
           <Modal.Title>Xác thực Admin</Modal.Title>
         </Modal.Header>
