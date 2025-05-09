@@ -62,7 +62,7 @@ function NumberList() {
     } finally {
       setTimeout(() => {
         setLoading(false);
-      }, 2000);
+      }, 4000);
       //setLoading(false);
     }
   };
