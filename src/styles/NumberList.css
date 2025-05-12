@@ -1,6 +1,6 @@
 /* src/styles/NumberList.css */
 .container {
-  margin-top: 1px;
+  margin-top: 0px;
   display: flex;
   flex-direction: column;
   min-height: auto;
